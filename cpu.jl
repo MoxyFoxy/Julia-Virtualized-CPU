@@ -142,7 +142,7 @@ function cpu(filepath::String)
 				end
 			end
 
-		elseif instruction == "LOAD" # load [register/pointer, value]
+		elseif instruction == "LOAD" # load [register/pointer, value/register/%register]
 			if size (arguments) > 2
 				throw ArgumentError("Too many arguments.")
 
