@@ -10,6 +10,10 @@ function cpu(filepath::String)
 	WP::UInt16 = 0x00 # Write Pointer
 	SP::UInt16 = 0x00 # Stack Pointer
 
+	# Interrupts
+
+	UOI::Bool = false # User Input Overflow Interrupt. Goes back to line 1 in code
+
 	# Flags
 
 	CF::Bool = false # Carry Flag, called on inexact error
@@ -66,6 +70,10 @@ function cpu(filepath::String)
 	end
 
 	while true
+		if UOI
+			fileline = 1
+		end
+
 		code::String = uppercase(replace(split(file[fileline], ";")[1], "," => " "))
 
 		instruction::String = split(code)[1]
