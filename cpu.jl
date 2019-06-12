@@ -152,6 +152,7 @@ function cpu(filepath::String)
 
 				if !isnumeric(value)
 					value = read_from_register(value)
+				end
 
 				if location == "A"
 					A = value
