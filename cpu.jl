@@ -12,9 +12,9 @@ function cpu(filepath::String)
 
 	# Flags
 
-	CF::Bool = false # Carry Flag
-	ZF::Bool = false # Zero Flag
-	OF::Bool = false # Open Flag, for any use
+	CF::Bool = false # Carry Flag, called on inexact error
+	ZF::Bool = false # Zero Flag, called on inexact error
+	OF::Bool = false # Open Flag, for any programmer use
 
 	# Memory
 
