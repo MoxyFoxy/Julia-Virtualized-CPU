@@ -84,8 +84,8 @@ function cpu(filepath::String)
 					value = parse(Int, arguments[1])
 					
 					if parse(Int, arguments[2]) == 16
-						lower::UInt8 = value % 0x100
-						upper::UInt8 = value // 0x100
+						lower::UInt8 = Int(value % 0x100)
+						upper::UInt8 = Int(value / 0x100)
 
 						memory[WP] = lower
 						WP += 1
