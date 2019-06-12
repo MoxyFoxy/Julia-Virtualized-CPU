@@ -87,6 +87,52 @@ function cpu(filepath::String)
 		end
 	end
 
+	# Writes to register or location. Note, pointer addresses cannot be written to outside of their opcodes
+	function writetolocation(location::AbstractString, value::UInt)
+		location = string(location)
+
+		if occursin("%", location)
+			if register == 'A'
+				memory[A] = value
+
+			elseif register == 'B'
+				memory[B] = value
+
+			elseif register == 'C'
+				memory[C] = value
+
+			elseif register == 'D'
+				memory[D] = value
+
+			else # Note, pointer addresses cannot be written to outside of their opcodes
+				throw ArgumentError("Incorrect register value. Did you try to use a pointer? Note that pointers cannot be used in a address write except through their respective opcodes.")
+			end
+
+		else
+			if location == "A"
+				A = value
+
+			elseif location == "B"
+				B = value
+
+			elseif location == "C"
+				C = value
+
+			elseif location == "D"
+				D = value
+
+			elseif location == "RP"
+				RP = value
+
+			elseif location == "WP"
+				WP = value
+
+			else # Note, SP cannot be written to
+				throw ArgumentError("Incorrect location value.")
+			end
+		end
+	end
+
 	while true
 		if UOI
 			fileline = 1
