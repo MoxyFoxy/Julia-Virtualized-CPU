@@ -222,32 +222,175 @@ function cpu(filepath::String)
 				location::String = arguments[1]
 				value = arguments[2]
 
-				if !isnumeric(value)
-					value = read_from_register(value)
-				end
+				writetolocation(location, value)
+			end
 
-				if location == "A"
-					A = value
+		elseif instruction == "PUSH" # push [value, bit size]
+			if size(arguments) > 2
+				throw ArgumentError("Too many arguments.")
 
-				elseif location == "B"
-					B = value
+			else
+				value = loadvalue(arguments[1])
 
-				elseif location == "C"
-					C = value
+				if parse(Int, arguments[2]) == 16
+					lower::UInt8 = Int(value % 0x100)
+					upper::UInt8 = Int(value / 0x100)
 
-				elseif location == "D"
-					D = value
+					SP += 1
+					stack[SP] = lower
+					
+					SP += 1
+					stack[SP] = upper
 
-				elseif location == "RP"
-					RP = value
-
-				elseif location == "WP"
-					WP = value
-
-				else # Note, SP cannot be written to
-					throw ArgumentError("Incorrect location value.")
+				elseif parse(Int, arguments[2]) == 8
+					SP += 1
+					stack[SP] = value
 				end
 			end
+
+		elseif instruction == "POP" # pop [location, bit size]
+			if size(arguments) > 2
+				throw ArgumentError("Too many arguments.")
+
+			else
+				if parse(Int, arguments[2]) == 16
+					value::UInt16 = stack[SP]
+					SP -= 1
+
+					value += stack[SP]
+					SP -= 1
+
+					writetolocation(arguments[1], value)
+
+				elseif parse(Int, arguments[2]) == 8
+					value::UInt8 = stack[SP]
+					SP -= 1
+
+					writetolocation(arguments[1], value)
+
+				else
+					throw ArgumentError("Incorrect bit size argument.")
+				end
+			end
+
+
+		elseif instruction == "GETIN"
+			if size(arguments) > 0
+				throw ArgumentError("Too many arguments.")
+
+			else
+				input::String = readline(STDIN)
+
+				if sizeof(input) > 255
+					OUI = true
+
+				else
+					for (i, char) in enumerate(input)
+						userin[i] = char
+					end
+				end
+			end
+
+		elseif instruction == "WIPEIN"
+			if size(arguments) > 0
+				throw ArgumentError("Too many arguments.")
+
+			else
+				wipeinput()
+			end
+
+		elseif instruction == "ADD" # add [location, value]
+			if size(arguments) > 2
+				throw ArgumentError("Too many arguments.")
+
+			else
+				writetolocation(arguments[1], loadvalue(arguments[1]) + loadvalue(arguments[2]))
+			end
+
+		elseif instruction == "SUB" # sub [location, value]
+			if size(arguments) > 2
+				throw ArgumentError("Too many arguments.")
+
+			else
+				writetolocation(arguments[1], loadvalue(arguments[1]) - loadvalue(arguments[2]))
+			end
+
+		elseif instruction == "JMP" # jmp [line/label]
+			if size(arguments) > 1
+				throw ArgumentError("Too many arguments.")
+
+			else
+				fileline = loadline(arguments[1])
+				continue
+			end
+
+		elseif instruction == "JEQ" # Jumps if two values are equal: jeq [location, value, line]
+			if size(arguments) > 3
+				throw ArgumentError("Too many arguments.")
+
+			else
+				if loadvalue(arguments[1]) == loadvalue(arguments[2])
+					fileline = loadvalue(arguments[3])
+					continue
+				end
+			end
+
+		elseif instruction == "JNEQ" # Jumps if two values are not equal: jneq [location, value, line]
+			if size(arguments) > 3
+				throw ArgumentError("Too many arguments.")
+
+			else
+				if loadvalue(arguments[1]) != loadvalue(arguments[2])
+					fileline = loadvalue(arguments[3])
+					continue
+				end
+			end
+
+		elseif instruction == "JGT" # Jumps if value 1 is greater than value 2: jgt [location, value, line]
+			if size(arguments) > 3
+				throw ArgumentError("Too many arguments.")
+
+			else
+				if loadvalue(arguments[1]) > loadvalue(arguments[2])
+					fileline = loadvalue(arguments[3])
+					continue
+				end
+			end
+
+		elseif instruction == "JNGT" # Jumps if value 1 is not greater than value 2: jngt [location, value, line]
+			if size(arguments) > 3
+				throw ArgumentError("Too many arguments.")
+
+			else
+				if !(loadvalue(arguments[1]) > loadvalue(arguments[2]))
+					fileline = loadvalue(arguments[3])
+					continue
+				end
+			end
+
+		elseif instruction == "JLT" # Jumps if value 1 is less than value 2: jlt [location, value, line]
+			if size(arguments) > 3
+				throw ArgumentError("Too many arguments.")
+
+			else
+				if loadvalue(arguments[1]) < loadvalue(arguments[2])
+					fileline = loadvalue(arguments[3])
+					continue
+				end
+			end
+
+		elseif instruction == "JNLT" # Jumps if value 1 is not less than value 2: jlt [location, value, line]
+			if size(arguments) > 3
+				throw ArgumentError("Too many arguments.")
+
+			else
+				if !(loadvalue(arguments[1]) < loadvalue(arguments[2]))
+					fileline = loadvalue(arguments[3])
+					continue
+				end
+			end
+
+		elseif instruction == "PRINT" # print [start address, end address]
 		end
 
 		fileline += 1
