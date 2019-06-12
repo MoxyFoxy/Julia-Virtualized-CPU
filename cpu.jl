@@ -28,6 +28,7 @@ function cpu(filepath::String)
 
 	function wipeinput()
 		userin = Array{UInt8}(0x00, 255)
+	end
 
 	# File Line
 
@@ -65,7 +66,7 @@ function cpu(filepath::String)
 				return memory[D]
 
 			else
-				throw ArgumentError("Incorrect register value.")
+				throw("Incorrect register value.")
 			end
 
 		else
@@ -82,7 +83,7 @@ function cpu(filepath::String)
 				return D
 
 			else
-				throw ArgumentError("Incorrect register value.")
+				throw("Incorrect register value.")
 			end
 		end
 	end
@@ -105,7 +106,7 @@ function cpu(filepath::String)
 				memory[D] = value
 
 			else # Note, pointer addresses cannot be written to outside of their opcodes
-				throw ArgumentError("Incorrect register value. Did you try to use a pointer? Note that pointers cannot be used in a address write except through their respective opcodes.")
+				throw("Incorrect register value. Did you try to use a pointer? Note that pointers cannot be used in a address write except through their respective opcodes.")
 			end
 
 		else
@@ -128,7 +129,7 @@ function cpu(filepath::String)
 				WP = value
 
 			else # Note, SP cannot be written to
-				throw ArgumentError("Incorrect location value.")
+				throw("Incorrect location value.")
 			end
 		end
 	end
@@ -149,7 +150,7 @@ function cpu(filepath::String)
 
 		if instruction == "WRITE" # write [value, bit size]
 			if size(arguments) > 2
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if isnumeric(arguments[1])
@@ -167,7 +168,7 @@ function cpu(filepath::String)
 						memory[WP] = value
 
 					else
-						throw ArgumentError("Incorrect bit size argument.")
+						throw("Incorrect bit size argument.")
 					end
 
 				else
@@ -180,7 +181,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "READ" # read [register, bit size]
 			if size(arguments) > 2
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if parse(Int, arguments[2]) == 16
@@ -192,7 +193,7 @@ function cpu(filepath::String)
 					value::UInt8 = memory[RP]
 
 				else
-					throw ArgumentError("Incorrect bit size argument.")
+					throw("Incorrect bit size argument.")
 				end
 
 				register::Char = arguments[1]
@@ -210,13 +211,13 @@ function cpu(filepath::String)
 					D = value
 
 				else
-					throw ArgumentError("Incorrect register value.")
+					throw("Incorrect register value.")
 				end
 			end
 
 		elseif instruction == "LOAD" # load [register/pointer, value/register/%register]
-			if size (arguments) > 2
-				throw ArgumentError("Too many arguments.")
+			if size(arguments) > 2
+				throw("Too many arguments.")
 
 			else
 				location::String = arguments[1]
@@ -227,7 +228,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "PUSH" # push [value, bit size]
 			if size(arguments) > 2
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				value = loadvalue(arguments[1])
@@ -250,7 +251,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "POP" # pop [location, bit size]
 			if size(arguments) > 2
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if parse(Int, arguments[2]) == 16
@@ -269,14 +270,14 @@ function cpu(filepath::String)
 					writetolocation(arguments[1], value)
 
 				else
-					throw ArgumentError("Incorrect bit size argument.")
+					throw("Incorrect bit size argument.")
 				end
 			end
 
 
 		elseif instruction == "GETIN"
 			if size(arguments) > 0
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				input::String = readline(STDIN)
@@ -293,7 +294,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "WIPEIN"
 			if size(arguments) > 0
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				wipeinput()
@@ -301,7 +302,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "ADD" # add [location, value]
 			if size(arguments) > 2
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				writetolocation(arguments[1], loadvalue(arguments[1]) + loadvalue(arguments[2]))
@@ -309,7 +310,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "SUB" # sub [location, value]
 			if size(arguments) > 2
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				writetolocation(arguments[1], loadvalue(arguments[1]) - loadvalue(arguments[2]))
@@ -317,7 +318,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "JMP" # jmp [line/label]
 			if size(arguments) > 1
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				fileline = loadline(arguments[1])
@@ -326,7 +327,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "JEQ" # Jumps if two values are equal: jeq [location, value, line]
 			if size(arguments) > 3
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if loadvalue(arguments[1]) == loadvalue(arguments[2])
@@ -337,7 +338,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "JNEQ" # Jumps if two values are not equal: jneq [location, value, line]
 			if size(arguments) > 3
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if loadvalue(arguments[1]) != loadvalue(arguments[2])
@@ -348,7 +349,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "JGT" # Jumps if value 1 is greater than value 2: jgt [location, value, line]
 			if size(arguments) > 3
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if loadvalue(arguments[1]) > loadvalue(arguments[2])
@@ -359,7 +360,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "JNGT" # Jumps if value 1 is not greater than value 2: jngt [location, value, line]
 			if size(arguments) > 3
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if !(loadvalue(arguments[1]) > loadvalue(arguments[2]))
@@ -370,7 +371,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "JLT" # Jumps if value 1 is less than value 2: jlt [location, value, line]
 			if size(arguments) > 3
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if loadvalue(arguments[1]) < loadvalue(arguments[2])
@@ -381,7 +382,7 @@ function cpu(filepath::String)
 
 		elseif instruction == "JNLT" # Jumps if value 1 is not less than value 2: jlt [location, value, line]
 			if size(arguments) > 3
-				throw ArgumentError("Too many arguments.")
+				throw("Too many arguments.")
 
 			else
 				if !(loadvalue(arguments[1]) < loadvalue(arguments[2]))
