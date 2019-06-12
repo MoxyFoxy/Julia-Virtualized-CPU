@@ -24,13 +24,31 @@ function cpu(filepath::String)
 
 	memory::Array{UInt8}(0x00, 5000)
 	stack::Array{UInt8}(0x00, 1000)
+	userin::Array{UInt8}(0x00, 255)
+
+	function wipeinput()
+		userin = Array{UInt8}(0x00, 255)
 
 	# File Line
 
 	fileline::UInt64 = 1
 	file::Array{String} = readlines(open(filepath))
 
-	function read_from_register(register::AbstractString)::UInt
+	# Loads a value. Checks for register addressing, register values, characters, and numerical values. Note for characters, it will ONLY return one character
+	function loadvalue(value::AbstractString)::UInt
+		if isnumeric(value)
+			return parse(UInt16, value)
+
+		else
+			potential_char = match(r"\"(\\\\|\\\"|[^\"])*\"", value)
+
+			if sizeof(potential_char) != 0
+				return UInt(potential_char[1])
+			end
+
+			register = value
+		end
+
 		if occursin("%", input)
 			register = replace(input, "%" => "")
 			
