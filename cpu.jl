@@ -26,6 +26,45 @@ function cpu(filepath::String)
 	fileline::UInt64 = 1
 	file::Array{String} = readlines(open(filepath))
 
+	function read_from_register(register::AbstractString)::UInt
+		if occursin("%", input)
+			register = replace(input, "%" => "")
+			
+			if register == 'A'
+				return memory[A]
+
+			elseif register == 'B'
+				return memory[B]
+
+			elseif register == 'C'
+				return memory[C]
+
+			elseif register == 'D'
+				return memory[D]
+
+			else
+				throw ArgumentError("Incorrect register value.")
+			end
+
+		else
+			if register == 'A'
+				return A
+
+			elseif register == 'B'
+				return B
+
+			elseif register == 'C'
+				return C
+
+			elseif register == 'D'
+				return D
+
+			else
+				throw ArgumentError("Incorrect register value.")
+			end
+		end
+	end
+
 	while true
 		code::String = uppercase(replace(split(file[fileline], ";")[1], "," => " "))
 
