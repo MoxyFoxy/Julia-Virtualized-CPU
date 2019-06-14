@@ -18,16 +18,21 @@ function cpu(filepath::String)
 
 	CF::Bool = false # Carry Flag, called on inexact error
 	ZF::Bool = false # Zero Flag, called on inexact error
+	CMF::Bool = false # 
 	OF::Bool = false # Open Flag, for any programmer use
 
 	# Memory
 
-	memory::Array{UInt8}(0x00, 5000)
-	stack::Array{UInt8}(0x00, 1000)
-	userin::Array{UInt8}(0x00, 255)
+	memory::Array{UInt8} = Array{UInt8}(undef, 5000)
+	stack::Array{UInt8} = Array{UInt8}(undef, 1000)
+	userin::Array{UInt8} = Array{UInt8}(undef, 255)
 
 	function wipeinput()
-		userin = Array{UInt8}(0x00, 255)
+		userin = Array{UInt8}(undef, 255)
+	end
+
+	function isUInt(s::AbstractString)::Bool
+		return tryparse(UInt, s) !== nothing
 	end
 
 	# File Line
@@ -36,22 +41,22 @@ function cpu(filepath::String)
 	file::Array{String} = readlines(open(filepath))
 
 	# Loads a value. Checks for register addressing, register values, characters, and numerical values. Note for characters, it will ONLY return one character
-	function loadvalue(value::AbstractString)::UInt
-		if isnumeric(value)
-			return parse(UInt16, value)
+	function loadvalue(stringvalue::AbstractString)::UInt
+		if isUInt(stringvalue)
+			return parse(UInt16, stringvalue)
 
 		else
-			potential_char = match(r"\"(\\\\|\\\"|[^\"])*\"", value)
+			potential_char = match(r"\"(\\\\|\\\"|[^\"])*\"", stringvalue)
 
 			if sizeof(potential_char) != 0
 				return UInt(potential_char[1])
 			end
 
-			register = value
+			register = stringvalue
 		end
 
-		if occursin("%", input)
-			register = replace(input, "%" => "")
+		if occursin("%", stringvalue)
+			register = Char(replace(stringvalue, "%" => "")[1])
 			
 			if register == 'A'
 				return memory[A]
@@ -70,6 +75,8 @@ function cpu(filepath::String)
 			end
 
 		else
+			register = Char(stringvalue[1])
+
 			if register == 'A'
 				return A
 
@@ -89,7 +96,7 @@ function cpu(filepath::String)
 	end
 
 	# Writes to register or location. Note, pointer addresses cannot be written to outside of their opcodes
-	function writetolocation(location::AbstractString, value::UInt)
+	function writetolocation(location::AbstractString, value)
 		location = string(location)
 
 		if occursin("%", location)
@@ -142,23 +149,24 @@ function cpu(filepath::String)
 		code::String = uppercase(replace(split(file[fileline], ";")[1], "," => " "))
 
 		instruction::String = split(code)[1]
-		arguments::Array{String}
 
-		if size(split(code)) > 1
-			arguments = split(code)[2:end]
+		debug("$fileline: $code")
+
+		if size(split(code))[1] > 1
+			arguments::Array{String} = split(code)[2:end]
 		end
 
 		if instruction == "WRITE" # write [value, bit size]
-			if size(arguments) > 2
+			if size(arguments)[1] > 2
 				throw("Too many arguments.")
 
 			else
-				if isnumeric(arguments[1])
+				if isUInt(arguments[1])
 					value = parse(Int, arguments[1])
 					
 					if parse(Int, arguments[2]) == 16
-						lower::UInt8 = Int(value % 0x100)
-						upper::UInt8 = Int(value / 0x100)
+						lower = Int(value % 0x100)
+						upper = Int(value / 0x100)
 
 						memory[WP] = lower
 						WP += 1
@@ -180,17 +188,17 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "READ" # read [register, bit size]
-			if size(arguments) > 2
+			if size(arguments)[1] > 2
 				throw("Too many arguments.")
 
 			else
 				if parse(Int, arguments[2]) == 16
-					value::UInt16 = memory[RP]
+					value = memory[RP]
 					RP += 1
 					value += memory[RP]
 
 				elseif parse(Int, arguments[2]) == 8
-					value::UInt8 = memory[RP]
+					value = memory[RP]
 
 				else
 					throw("Incorrect bit size argument.")
@@ -216,26 +224,26 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "LOAD" # load [register/pointer, value/register/%register]
-			if size(arguments) > 2
+			if size(arguments)[1] > 2
 				throw("Too many arguments.")
 
 			else
 				location::String = arguments[1]
-				value = arguments[2]
+				value = loadvalue(arguments[2])
 
 				writetolocation(location, value)
 			end
 
 		elseif instruction == "PUSH" # push [value, bit size]
-			if size(arguments) > 2
+			if size(arguments)[1] > 2
 				throw("Too many arguments.")
 
 			else
 				value = loadvalue(arguments[1])
 
 				if parse(Int, arguments[2]) == 16
-					lower::UInt8 = Int(value % 0x100)
-					upper::UInt8 = Int(value / 0x100)
+					lower = Int(value % 0x100)
+					upper = Int(value / 0x100)
 
 					SP += 1
 					stack[SP] = lower
@@ -250,12 +258,12 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "POP" # pop [location, bit size]
-			if size(arguments) > 2
+			if size(arguments)[1] > 2
 				throw("Too many arguments.")
 
 			else
 				if parse(Int, arguments[2]) == 16
-					value::UInt16 = stack[SP]
+					value = stack[SP]
 					SP -= 1
 
 					value += stack[SP]
@@ -264,7 +272,7 @@ function cpu(filepath::String)
 					writetolocation(arguments[1], value)
 
 				elseif parse(Int, arguments[2]) == 8
-					value::UInt8 = stack[SP]
+					value = stack[SP]
 					SP -= 1
 
 					writetolocation(arguments[1], value)
@@ -276,7 +284,7 @@ function cpu(filepath::String)
 
 
 		elseif instruction == "GETIN"
-			if size(arguments) > 0
+			if size(arguments)[1] > 0
 				throw("Too many arguments.")
 
 			else
@@ -293,7 +301,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "WIPEIN"
-			if size(arguments) > 0
+			if size(arguments)[1] > 0
 				throw("Too many arguments.")
 
 			else
@@ -301,7 +309,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "ADD" # add [location, value]
-			if size(arguments) > 2
+			if size(arguments)[1] > 2
 				throw("Too many arguments.")
 
 			else
@@ -309,7 +317,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "SUB" # sub [location, value]
-			if size(arguments) > 2
+			if size(arguments)[1] > 2
 				throw("Too many arguments.")
 
 			else
@@ -317,7 +325,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "JMP" # jmp [line/label]
-			if size(arguments) > 1
+			if size(arguments)[1] > 1
 				throw("Too many arguments.")
 
 			else
@@ -326,7 +334,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "JEQ" # Jumps if two values are equal: jeq [location, value, line]
-			if size(arguments) > 3
+			if size(arguments)[1] > 3
 				throw("Too many arguments.")
 
 			else
@@ -337,7 +345,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "JNEQ" # Jumps if two values are not equal: jneq [location, value, line]
-			if size(arguments) > 3
+			if size(arguments)[1] > 3
 				throw("Too many arguments.")
 
 			else
@@ -348,7 +356,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "JGT" # Jumps if value 1 is greater than value 2: jgt [location, value, line]
-			if size(arguments) > 3
+			if size(arguments)[1] > 3
 				throw("Too many arguments.")
 
 			else
@@ -359,7 +367,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "JNGT" # Jumps if value 1 is not greater than value 2: jngt [location, value, line]
-			if size(arguments) > 3
+			if size(arguments)[1] > 3
 				throw("Too many arguments.")
 
 			else
@@ -370,7 +378,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "JLT" # Jumps if value 1 is less than value 2: jlt [location, value, line]
-			if size(arguments) > 3
+			if size(arguments)[1] > 3
 				throw("Too many arguments.")
 
 			else
@@ -381,7 +389,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "JNLT" # Jumps if value 1 is not less than value 2: jlt [location, value, line]
-			if size(arguments) > 3
+			if size(arguments)[1] > 3
 				throw("Too many arguments.")
 
 			else
