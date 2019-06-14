@@ -420,13 +420,43 @@ function cpu(filepath::String)
 				end
 			end
 
-		elseif instruction == "PRINT" # print [start address, end address]
+		elseif instruction == "JIF" # Jumps if flag is true: jif [flag, line]
+			if size(arguments)[1] > 2
+				throw("Too many arguments.")
+
+			else
+				flag::String = arguments[1]
+				line = parse(Int, arguments[2])
+
+				if flag == "CF"
+				end
+			end
+
+		elseif instruction == "PRINT" # print [char amount]
+			if size(arguments)[1] > 2
+				throw("Too many arguments.")
+
+			else
+				i = loadvalue(arguments[1])
+
+				while RP <= i
+					print(Char(memory[RP]), "")
+					RP += 1
+				end
+			end
 		end
 
 		fileline += 1
+
+		if fileline > size(file)[1]
+			break
+		end
 	end
 end
 
-if size(ARGS) > 0
+if size(ARGS)[1] > 0
+	debug("Loading File: $(ARGS[1])")
 	cpu(ARGS[1])
+else
+	debug("Error: No file loaded.\nPlease type: julia cpu.jl [path/to/file]")
 end
