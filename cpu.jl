@@ -6,9 +6,9 @@ function cpu(filepath::String)
 	B::UInt16 = 0x00 # Open Register
 	C::UInt16 = 0xff # Count Register
 	D::UInt16 = 0x00 # Data Register
-	RP::UInt16 = 0x00 # Read Pointer
-	WP::UInt16 = 0x00 # Write Pointer
-	SP::UInt16 = 0x00 # Stack Pointer
+	RP::UInt16 = 0x01 # Read Pointer
+	WP::UInt16 = 0x01 # Write Pointer
+	SP::UInt16 = 0x01 # Stack Pointer
 
 	# Interrupts
 
