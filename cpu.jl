@@ -332,6 +332,19 @@ function cpu(filepath::String)
 				writetolocation(arguments[1], loadvalue(arguments[1]) - loadvalue(arguments[2]))
 			end
 
+		elseif instruction == "ITER" # iter [pointer]
+			if size(arguments)[1] > 1
+				throw("Too many arguments.")
+
+			else
+				if arguments[1] == "RP"
+					RP += 1
+
+				elseif arguments[1] == "WP"
+					WP += 1
+				end
+			end
+
 		elseif instruction == "JMP" # jmp [line/label]
 			if size(arguments)[1] > 1
 				throw("Too many arguments.")
