@@ -1,3 +1,11 @@
+function debug(s::AbstractString)
+	if size(ARGS)[1] > 0
+		if ARGS[2] == "true"
+			println(s)
+		end
+	end
+end
+
 function cpu(filepath::String)
 
 	# Registers. https://www.swansontec.com/sregisters.html is a good reference. Based mostly on this
