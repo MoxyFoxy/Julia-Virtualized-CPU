@@ -1,2 +1,2 @@
-write abcdefghijklmnopqrstuvwxyz
-print 26
+strwrite abcdefghijklmnopqrstuvwxyz test
+print 31

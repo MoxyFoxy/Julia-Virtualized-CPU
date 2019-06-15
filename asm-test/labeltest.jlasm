@@ -1,0 +1,8 @@
+.start
+	goto hello
+	print 3
+
+.hello
+	strwrite HELLO WORLD!\n
+	print 13
+	HLT
