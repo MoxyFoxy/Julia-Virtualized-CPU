@@ -32,10 +32,13 @@ function cpu(filepath::String)
 
 	memory::Array{UInt8} = Array{UInt8}(undef, 5000)
 	stack::Array{UInt8} = Array{UInt8}(undef, 1000)
-	userin::Array{UInt8} = Array{UInt8}(undef, 255)
 
 	function wipeinput()
-		userin = Array{UInt8}(undef, 255)
+		i = 0
+
+		while i != 255
+			memory[i] = 0
+		end
 	end
 
 	function isUInt(s::AbstractString)::Bool
@@ -46,6 +49,19 @@ function cpu(filepath::String)
 
 	fileline::UInt64 = 1
 	file::Array{String} = readlines(open(filepath))
+
+	labels::Dict{String, Int} = Dict{String, Int}()
+
+	for (linecount, line) in enumerate(file)
+		try
+			labelcheck = split(uppercase(replace(split(line, ";")[1], "," => " ")))[1]
+
+			if labelcheck[1] == '.'
+				push!(labels, replace(labelcheck, "." => "") => linecount)
+			end
+		catch BoundsError
+		end
+	end
 
 	# Loads a value. Checks for register addressing, register values, characters, and numerical values. Note for characters, it will ONLY return one character
 	function loadvalue(stringvalue::AbstractString)::UInt
@@ -107,6 +123,8 @@ function cpu(filepath::String)
 		location = string(location)
 
 		if occursin("%", location)
+			register = Char(replace(location, "%" => ""))
+
 			if register == 'A'
 				memory[A] = value
 
@@ -153,7 +171,7 @@ function cpu(filepath::String)
 			fileline = 1
 		end
 
-		code::String = uppercase(replace(split(file[fileline], ";")[1], "," => " "))
+		code::String = replace(uppercase(replace(split(file[fileline], ";")[1], "," => " ")), "\t" => "")
 
 		instruction::String = split(code)[1]
 
@@ -194,6 +212,14 @@ function cpu(filepath::String)
 				end
 			end
 
+		elseif instruction == "STRWRITE" # strwrite [string]
+			stringtowrite = replace(replace(code, "STRWRITE " => ""), "\\N" => "\n")
+
+			for char in stringtowrite
+				memory[WP] = Int(char)
+				WP += 1
+			end
+
 		elseif instruction == "READ" # read [register, bit size]
 			if size(arguments)[1] > 2
 				throw("Too many arguments.")
@@ -211,19 +237,25 @@ function cpu(filepath::String)
 					throw("Incorrect bit size argument.")
 				end
 
-				register::Char = arguments[1]
+				register = arguments[1]
 
-				if register == 'A'
+				if register == "A"
 					A = value
 
-				elseif register == 'B'
+				elseif register == "B"
 					B = value
 
-				elseif register == 'C'
+				elseif register == "C"
 					C = value
 
-				elseif register == 'D'
+				elseif register == "D"
 					D = value
+
+				elseif register == "RP"
+					RP = value
+
+				elseif register == "WP"
+					WP = value
 
 				else
 					throw("Incorrect register value.")
@@ -302,7 +334,14 @@ function cpu(filepath::String)
 
 				else
 					for (i, char) in enumerate(input)
-						userin[i] = char
+						address = sizeof(memory)[1] - 255 + i
+
+						if !(address == sizeof(memory)[1])
+							memory[end - 255 + i] = char
+
+						else
+							break
+						end
 					end
 				end
 			end
@@ -419,15 +458,46 @@ function cpu(filepath::String)
 				end
 			end
 
-		elseif instruction == "JIF" # Jumps if flag is true: jif [flag, line]
+		elseif instruction == "JIF" # Jumps if open flag is true: jif [flag, line]
 			if size(arguments)[1] > 2
 				throw("Too many arguments.")
 
 			else
-				flag::String = arguments[1]
+				flag = arguments[1]
 				line = parse(Int, arguments[2])
 
-				if flag == "CF"
+				if flag == "OF"
+					if OF
+						fileline = line
+					end
+
+				elseif flag == "OF2"
+					if OF2
+						fileline = line
+					end
+
+				elseif flag == "OF3"
+					if OF3
+						fileline = line
+					end
+				end
+			end
+
+		elseif instruction == "TOGGLE"
+			if size(arguments)[1] > 1
+				throw("Too many arguments.")
+
+			else
+				flag = arguments[1]
+
+				if flag == "OF"
+					OF = !OF
+
+				elseif flag == "OF2"
+					OF2 = !OF2
+
+				elseif flag == "OF3"
+					OF3 = !OF3
 				end
 			end
 
@@ -443,6 +513,12 @@ function cpu(filepath::String)
 					RP += 1
 				end
 			end
+
+		elseif instruction == "GOTO" # goto [label]
+			fileline = labels[arguments[1]]
+
+		elseif instruction == "HLT"
+			break
 		end
 
 		fileline += 1
