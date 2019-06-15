@@ -1,3 +1,6 @@
+# Julia virtual CPU created by Masterfoxify
+# Called using: julia cpu.jl path/to/file.jlasm [optional debugging method, type "true" if you want debugging text turned on]
+
 function debug(s::AbstractString)
 	if size(ARGS)[1] > 1
 		if ARGS[2] == "true"
