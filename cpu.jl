@@ -1,5 +1,5 @@
 function debug(s::AbstractString)
-	if size(ARGS)[1] > 0
+	if size(ARGS)[1] > 1
 		if ARGS[2] == "true"
 			println(s)
 		end
