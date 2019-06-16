@@ -10,7 +10,7 @@ Make sure to install the Julia binary from julialang.org or compile it yourself 
 # OpCodes
 write (for writing numerical values, but can also write one-word strings) - WRITE [numeric value, bit size (8 or 16 for all bit sizes hereon)]
 
-strwrite (for writing strings. NOTE: only does uppercase. To get lowercase characters, use write with their integer values) - STRWRITE [string]
+strwrite (for writing strings) - STRWRITE [string]
 
 read (for reading value to a register) - READ [register, bit size]
 
