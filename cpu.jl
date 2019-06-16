@@ -520,12 +520,14 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				i = loadvalue(arguments[1])
+				i = RP + loadvalue(arguments[1])
 
-				while RP <= i
+				while RP < i
 					print(Char(memory[RP]), "")
 					RP += 1
 				end
+
+				debug("")
 			end
 
 		elseif instruction == "GOTO" # goto [label]
