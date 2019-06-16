@@ -35,14 +35,14 @@ function cpu(filepath::String)
 
 	memory::Array{UInt8} = Array{UInt8}(undef, 5000)
 
-	for byte in memory
-		byte = 0
+	for (byte, x) in enumerate(memory)
+		memory[byte] = 0x00
 	end
 
 	stack::Array{UInt8} = Array{UInt8}(undef, 1000)
 
-	for byte in stack
-		byte = 0
+	for (byte, x) in enumerate(stack)
+		stack[byte] = 0x00
 	end
 
 	function wipeinput()
