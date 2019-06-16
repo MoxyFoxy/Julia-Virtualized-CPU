@@ -34,7 +34,16 @@ function cpu(filepath::String)
 	# Memory
 
 	memory::Array{UInt8} = Array{UInt8}(undef, 5000)
+
+	for byte in memory
+		byte = 0
+	end
+
 	stack::Array{UInt8} = Array{UInt8}(undef, 1000)
+
+	for byte in stack
+		byte = 0
+	end
 
 	function wipeinput()
 		i = 0
@@ -82,8 +91,8 @@ function cpu(filepath::String)
 		end
 
 		if occursin("%", stringvalue)
-			register = replace(stringvalue, "%" => "")[1]
-			
+			register = replace(stringvalue, "%" => "")
+		
 			if register == "A"
 				return memory[A]
 
@@ -96,8 +105,8 @@ function cpu(filepath::String)
 			elseif register == "D"
 				return memory[D]
 
-			elseif isUInt(replace(stringvalue, "%" => "")[1])
-				return memory[parse(UInt, replace(strinvalue, "%" => "")[1])]
+			elseif isUInt(replace(stringvalue, "%" => ""))
+				return memory[parse(UInt, replace(stringvalue, "%" => ""))]
 
 			else
 				throw("Incorrect register value.")
@@ -133,18 +142,18 @@ function cpu(filepath::String)
 		location = string(location)
 
 		if occursin("%", location)
-			register = Char(replace(location, "%" => ""))
+			register = replace(location, "%" => "")
 
-			if register == 'A'
+			if register == "A"
 				memory[A] = value
 
-			elseif register == 'B'
+			elseif register == "A"
 				memory[B] = value
 
-			elseif register == 'C'
+			elseif register == "C"
 				memory[C] = value
 
-			elseif register == 'D'
+			elseif register == "D"
 				memory[D] = value
 
 			else # Note, pointer addresses cannot be written to outside of their opcodes
@@ -404,7 +413,7 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				fileline = loadline(arguments[1])
+				fileline = loadvalue(arguments[1])
 				continue
 			end
 
