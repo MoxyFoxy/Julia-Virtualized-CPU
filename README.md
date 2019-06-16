@@ -2,7 +2,7 @@
 Julia Virtualized CPU, will possibly be used for a video game I'm making
 
 # Infrastructure
-The CPU has four registers, A (accumulator), B (open register), C (count register), and D (data register). There are also three pointers, the RP (read pointer), WP (write pointer), and SP (stack pointer). There is currently only a single interrupt, the UOI, or User Input Overflow Interrupt, which defaults to going back to the first line of code for now, may change later. The CPU also has three flags: OF, OF2, and OF3, all open flags that can be set with the TOGGLE opcode. As for memory, the CPU has 5kb of memory, and a 1kb stack. Memory addresses can be read through the RP's respective opcode, or by using %[register], which causes the register to act like a pointer, and call its numeric value from the memory array.
+The CPU has four 16-bit registers, A (accumulator), B (open register), C (count register), and D (data register). There are also three 16-bit pointers, the RP (read pointer), WP (write pointer), and SP (stack pointer). There is currently only a single interrupt, the UOI, or User Input Overflow Interrupt, which defaults to going back to the first line of code for now, may change later. The CPU also has three flags: OF, OF2, and OF3, all open flags that can be set with the TOGGLE opcode. As for memory, the CPU has 5kb of memory, and a 1kb stack. Memory addresses can be read through the RP's respective opcode, or by using %[register], which causes the register to act like a pointer, and call its numeric value from the memory array.
 
 # OpCodes
 write (for writing numerical values, but can also write one-word strings) - WRITE [numeric value, bit size (8 or 16 for all bit sizes hereon)]
