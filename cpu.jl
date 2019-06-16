@@ -119,6 +119,9 @@ function cpu(filepath::String)
 			elseif stringvalue == "RP"
 				return RP
 
+			elseif stringvalue == "WP"
+				return WP
+
 			else
 				throw("Incorrect register value.")
 			end
