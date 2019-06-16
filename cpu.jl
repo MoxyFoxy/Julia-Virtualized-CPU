@@ -225,7 +225,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "STRWRITE" # strwrite [string]
-			stringtowrite = replace(replace(code, "STRWRITE " => ""), "\\N" => "\n")
+			stringtowrite = replace(replace(split(file[fileline], ";")[1], "\t" => "")[10:end], "\\n" => "\n")
 
 			for char in stringtowrite
 				memory[WP] = Int(char)
