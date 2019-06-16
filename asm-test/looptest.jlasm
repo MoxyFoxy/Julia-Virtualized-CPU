@@ -1,15 +1,12 @@
 .start
-    load C 40
-    load B 49
+    load C 26
+    load B 65
 
 .loop
-	jeq C 0 16
+	jeq C 0 13
     write B 8
     iter WP
-    strwrite \n
-    iter WP
-    print 2
-    iter RP
+    print 1
     sub C 1
     add B 1
     goto .loop
