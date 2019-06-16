@@ -118,7 +118,7 @@ Labels: Dict("STRINGTESTLOOP"=>33,"STRINGTEST"=>29,"START"=>1)
 3:
 4: STRWRITE THIS IS EQUIVALENT.\N
         Wrote "This is equivalent.
-" to 1 through 21
+        " to 1 through 21
 5: WRITE 0 16
         Writing 0 to 21
 6: PRINT 20
@@ -133,7 +133,7 @@ This is equivalent.
 13:
 14: STRWRITE THIS IS EQUIVALENT.\N
         Wrote "This is equivalent.
-" to 23 through 43
+        " to 23 through 43
 15: WRITE 0 8
         Writing 0 to 43
 16: PRINT 20
