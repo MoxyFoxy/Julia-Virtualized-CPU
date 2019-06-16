@@ -79,23 +79,21 @@ function cpu(filepath::String)
 			if sizeof(potential_char) != 0
 				return UInt(potential_char[1])
 			end
-
-			register = stringvalue
 		end
 
 		if occursin("%", stringvalue)
-			register = Char(replace(stringvalue, "%" => "")[1])
+			register = replace(stringvalue, "%" => "")[1]
 			
-			if register == 'A'
+			if register == "A"
 				return memory[A]
 
-			elseif register == 'B'
+			elseif register == "B"
 				return memory[B]
 
-			elseif register == 'C'
+			elseif register == "C"
 				return memory[C]
 
-			elseif register == 'D'
+			elseif register == "D"
 				return memory[D]
 
 			elseif isUInt(replace(stringvalue, "%" => "")[1])
@@ -106,19 +104,20 @@ function cpu(filepath::String)
 			end
 
 		else
-			register = Char(stringvalue[1])
-
-			if register == 'A'
+			if stringvalue == "A"
 				return A
 
-			elseif register == 'B'
+			elseif stringvalue == "B"
 				return B
 
-			elseif register == 'C'
+			elseif stringvalue == "C"
 				return C
 
-			elseif register == 'D'
+			elseif stringvalue == "D"
 				return D
+
+			elseif stringvalue == "RP"
+				return RP
 
 			else
 				throw("Incorrect register value.")
