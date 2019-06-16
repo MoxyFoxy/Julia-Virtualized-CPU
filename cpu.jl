@@ -66,6 +66,8 @@ function cpu(filepath::String)
 		end
 	end
 
+	debug("Labels: $labels")
+
 	# Loads a value. Checks for register addressing, register values, characters, and numerical values. Note for characters, it will ONLY return one character
 	function loadvalue(stringvalue::AbstractString)::UInt
 		if isUInt(stringvalue)
@@ -174,9 +176,16 @@ function cpu(filepath::String)
 			fileline = 1
 		end
 
-		code::String = replace(uppercase(replace(split(file[fileline], ";")[1], "," => " ")), "\t" => "")
+		code::String = ""
+		instruction::String = ""
 
-		instruction::String = split(code)[1]
+		try
+			code = replace(uppercase(replace(split(file[fileline], ";")[1], "," => " ")), "\t" => "")
+
+			instruction = split(code)[1]
+
+		catch BoundsError
+		end
 
 		debug("$fileline: $code")
 
@@ -189,8 +198,8 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				if isUInt(arguments[1])
-					value = parse(Int, arguments[1])
+				if isUInt(arguments[1]) || arguments[1] in ["A", "B", "C", "D", "%A", "%B", "%C", "%D"]
+					value = loadvalue(arguments[1])
 					
 					if parse(Int, arguments[2]) == 16
 						lower = Int(value % 0x100)
@@ -272,7 +281,6 @@ function cpu(filepath::String)
 			else
 				location::String = arguments[1]
 				value = loadvalue(arguments[2])
-
 				writetolocation(location, value)
 			end
 
@@ -521,7 +529,7 @@ function cpu(filepath::String)
 			end
 
 		elseif instruction == "GOTO" # goto [label]
-			fileline = labels[arguments[1]]
+			fileline = labels[replace(arguments[1], "." => "")]
 
 		elseif instruction == "HLT"
 			break
