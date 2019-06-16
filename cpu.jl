@@ -75,7 +75,7 @@ function cpu(filepath::String)
 		end
 	end
 
-	debug("Labels: $labels")
+	debug("Labels: $labels\n")
 
 	# Loads a value. Checks for register addressing, register values, characters, and numerical values. Note for characters, it will ONLY return one character
 	function loadvalue(stringvalue::AbstractString)::UInt
