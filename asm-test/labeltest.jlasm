@@ -3,6 +3,6 @@
 	print 3
 
 .hello
-	strwrite HELLO WORLD!\n
+	strwrite Hello World!\n
 	print 13
 	HLT
