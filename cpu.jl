@@ -334,7 +334,6 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				val1 = SP
 				if parse(Int, arguments[2]) == 16
 					value = stack[SP]
 					SP -= 1
@@ -354,8 +353,6 @@ function cpu(filepath::String)
 					throw("Incorrect bit size argument.")
 				end
 			end
-			val2 = SP
-			debug("$(memory[stack[val2]:stack[val2] + 20])")
 
 
 		elseif instruction == "GETIN"

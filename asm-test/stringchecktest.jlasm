@@ -1,5 +1,5 @@
 .start
-	push 21 8						; Where to jump to after the string test
+	push 20 8						; Where to jump to after the string test
 
 	strwrite This is equivalent.\n
 	write 0 16						; For some odd reason, double null buffer is needed or rogue 0x54 enters the fray
@@ -9,7 +9,7 @@
 	iter RP
 
 	push 1 8						; Pointer to first string. 1-based indexing
-	push WP 8						; Pointer to second string
+	push RP 8						; Pointer to second string
 
 	strwrite This is equivalent.\n
 	write 0 8
@@ -17,7 +17,7 @@
 
 	goto .stringtest
 
-	jif OF 26						; Check to see if first OF is set to true
+	jif OF 25						; Check to see if first OF is set to true
 	strwrite The strings are not equal.
 	print 26
 	hlt
