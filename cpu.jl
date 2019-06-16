@@ -386,7 +386,7 @@ function cpu(filepath::String)
 				end
 			end
 
-		elseif instruction == "JMP" # jmp [line/label]
+		elseif instruction == "JMP" # jmp [line]
 			if size(arguments)[1] > 1
 				throw("Too many arguments.")
 
@@ -472,21 +472,24 @@ function cpu(filepath::String)
 				if flag == "OF"
 					if OF
 						fileline = line
+						continue
 					end
 
 				elseif flag == "OF2"
 					if OF2
 						fileline = line
+						continue
 					end
 
 				elseif flag == "OF3"
 					if OF3
 						fileline = line
+						continue
 					end
 				end
 			end
 
-		elseif instruction == "TOGGLE"
+		elseif instruction == "TOGGLE" # Toggles flag value: toggle [flag]
 			if size(arguments)[1] > 1
 				throw("Too many arguments.")
 
