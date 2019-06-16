@@ -7,7 +7,7 @@ The CPU has four 16-bit registers, A (accumulator), B (open register), C (count 
 # OpCodes
 write (for writing numerical values, but can also write one-word strings) - WRITE [numeric value, bit size (8 or 16 for all bit sizes hereon)]
 
-strwrite (for writing strings) - STRWRITE [string]
+strwrite (for writing strings. NOTE: only does uppercase. To get lowercase characters, use write with their integer values) - STRWRITE [string]
 
 read (for reading value to a register) - READ [register, bit size]
 
