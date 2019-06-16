@@ -212,7 +212,7 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				debug("Writing $(arguments[1]) to $WP")
+				debug("	Writing $(arguments[1]) to $WP")
 
 				if isUInt(arguments[1]) || arguments[1] in ["A", "B", "C", "D", "%A", "%B", "%C", "%D"]
 					value = loadvalue(arguments[1])
@@ -243,7 +243,7 @@ function cpu(filepath::String)
 		elseif instruction == "STRWRITE" # strwrite [string]
 			stringtowrite = replace(replace(split(file[fileline], ";")[1], "\t" => "")[10:end], "\\n" => "\n")
 
-			debugmessage = "Wrote \"$(stringtowrite)\" to $WP through "
+			debugmessage = replace("	Wrote \"$(stringtowrite)\" to $WP through ", "\n" => "\n\t")
 
 			for char in stringtowrite
 				memory[WP] = Int(char)
@@ -303,7 +303,7 @@ function cpu(filepath::String)
 				location::String = arguments[1]
 				value = loadvalue(arguments[2])
 				writetolocation(location, value)
-				debug("Wrote $value to $location")
+				debug("	Wrote $value to $location")
 			end
 
 		elseif instruction == "PUSH" # push [value, bit size]
@@ -430,8 +430,8 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				debug("ARG1: $(loadvalue(arguments[1]))\nARG2: $(loadvalue(arguments[2]))")
-				debug("ARG1 == ARG2: $(loadvalue(arguments[1]) == loadvalue(arguments[2]))")
+				debug("	ARG1: $(loadvalue(arguments[1]))\n\tARG2: $(loadvalue(arguments[2]))")
+				debug("	ARG1 == ARG2: $(loadvalue(arguments[1]) == loadvalue(arguments[2]))")
 
 				if loadvalue(arguments[1]) == loadvalue(arguments[2])
 					fileline = loadvalue(arguments[3])
@@ -444,8 +444,8 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				debug("ARG1: $(loadvalue(arguments[1]))\nARG2: $(loadvalue(arguments[2]))")
-				debug("ARG1 != ARG2: $(loadvalue(arguments[1]) != loadvalue(arguments[2]))")
+				debug("	ARG1: $(loadvalue(arguments[1]))\n\tARG2: $(loadvalue(arguments[2]))")
+				debug("	ARG1 != ARG2: $(loadvalue(arguments[1]) != loadvalue(arguments[2]))")
 
 				if loadvalue(arguments[1]) != loadvalue(arguments[2])
 					fileline = loadvalue(arguments[3])
@@ -458,8 +458,8 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				debug("ARG1: $(loadvalue(arguments[1]))\nARG2: $(loadvalue(arguments[2]))")
-				debug("ARG1 > ARG2: $(loadvalue(arguments[1]) > loadvalue(arguments[2]))")
+				debug("	ARG1: $(loadvalue(arguments[1]))\n\tARG2: $(loadvalue(arguments[2]))")
+				debug("	ARG1 > ARG2: $(loadvalue(arguments[1]) > loadvalue(arguments[2]))")
 
 				if loadvalue(arguments[1]) > loadvalue(arguments[2])
 					fileline = loadvalue(arguments[3])
@@ -472,8 +472,8 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				debug("ARG1: $(loadvalue(arguments[1]))\nARG2: $(loadvalue(arguments[2]))")
-				debug("ARG1 !> ARG2: $(!(loadvalue(arguments[1]) > loadvalue(arguments[2])))")
+				debug("	ARG1: $(loadvalue(arguments[1]))\n\tARG2: $(loadvalue(arguments[2]))")
+				debug("	ARG1 !> ARG2: $(!(loadvalue(arguments[1]) > loadvalue(arguments[2])))")
 
 				if !(loadvalue(arguments[1]) > loadvalue(arguments[2]))
 					fileline = loadvalue(arguments[3])
@@ -486,8 +486,8 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				debug("ARG1: $(loadvalue(arguments[1]))\nARG2: $(loadvalue(arguments[2]))")
-				debug("ARG1 < ARG2: $(loadvalue(arguments[1]) < loadvalue(arguments[2]))")
+				debug("	ARG1: $(loadvalue(arguments[1]))\n\tARG2: $(loadvalue(arguments[2]))")
+				debug("	ARG1 < ARG2: $(loadvalue(arguments[1]) < loadvalue(arguments[2]))")
 
 				if loadvalue(arguments[1]) < loadvalue(arguments[2])
 					fileline = loadvalue(arguments[3])
@@ -500,8 +500,8 @@ function cpu(filepath::String)
 				throw("Too many arguments.")
 
 			else
-				debug("ARG1: $(loadvalue(arguments[1]))\nARG2: $(loadvalue(arguments[2]))")
-				debug("ARG1 !< ARG2: $((loadvalue(arguments[1]) < loadvalue(arguments[2])))")
+				debug("	ARG1: $(loadvalue(arguments[1]))\n\tARG2: $(loadvalue(arguments[2]))")
+				debug("	ARG1 !< ARG2: $((loadvalue(arguments[1]) < loadvalue(arguments[2])))")
 
 				if !(loadvalue(arguments[1]) < loadvalue(arguments[2]))
 					fileline = loadvalue(arguments[3])
@@ -548,15 +548,15 @@ function cpu(filepath::String)
 
 				if flag == "OF"
 					OF = !OF
-					debug("OF: $OF")
+					debug("	OF: $OF")
 
 				elseif flag == "OF2"
 					OF2 = !OF2
-					debug("OF2: $OF2")
+					debug("	OF2: $OF2")
 
 				elseif flag == "OF3"
 					OF3 = !OF3
-					debug("OF3: $OF3")
+					debug("	OF3: $OF3")
 				end
 			end
 
