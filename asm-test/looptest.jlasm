@@ -1,0 +1,16 @@
+.start
+    load C 40
+    load B 49
+
+.loop
+	jeq C 0 16
+    write B 8
+    iter WP
+    strwrite \n
+    iter WP
+    print 2
+    iter RP
+    sub C 1
+    add B 1
+    goto .loop
+    hlt
