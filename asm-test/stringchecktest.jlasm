@@ -1,0 +1,53 @@
+.start
+	push 21 8						; Where to jump to after the string test
+
+	strwrite This is equivalent.\n
+	iter WP
+	write 0 8
+	print 20
+	iter RP
+
+	push 1 8						; Pointer to first string. 1-based indexing
+	push WP 8						; Pointer to second string
+
+	strwrite This is equivalent.\n
+	iter WP
+	write 0 8
+	print 20
+
+	goto .stringtest
+
+	iter RP
+	iter RP
+	jif OF 26
+	strwrite The strings are not equal.
+	print 26
+	hlt
+
+	strwrite The strings are equal.
+	print 22
+	hlt
+
+.stringtest
+	pop B 8
+	pop D 8
+
+	.stringtestloop
+		jeq %B 0 47					; Check to see if first string has terminated
+		jeq %D 0 40					; Check to see if second string has terminated (if first string hasn't terminated)
+
+		jeq %B %D 43 				; Check to see if the two characters are equal
+		pop B 8
+		jmp B
+
+		add B 1
+		add D 1
+		goto .stringtestloop
+
+		jeq %D 0 51					; Check to see if second string has terminated (if the first string HAS terminated)
+		pop B 8
+		jmp B
+
+		toggle OF
+		pop B 8
+		jmp B
