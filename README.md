@@ -93,7 +93,7 @@ hlt (stops the program) - HLT
 			jeq %B 0 45				; Check to see if first string has terminated
 			jeq %D 0 38				; Check to see if second string has terminated (if first string hasn't terminated)
 
-			jeq %B %D 41			; Check to see if the two characters are equal
+			jeq %B %D 41				; Check to see if the two characters are equal
 			pop B 8
 			jmp B
 
