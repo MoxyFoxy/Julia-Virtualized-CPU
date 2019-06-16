@@ -98,6 +98,9 @@ function cpu(filepath::String)
 			elseif register == 'D'
 				return memory[D]
 
+			elseif isUInt(replace(stringvalue, "%" => "")[1])
+				return memory[parse(UInt, replace(strinvalue, "%" => "")[1])]
+
 			else
 				throw("Incorrect register value.")
 			end
