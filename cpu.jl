@@ -69,7 +69,7 @@ function cpu(filepath::String)
 			labelcheck = split(uppercase(replace(split(line, ";")[1], "," => " ")))[1]
 
 			if labelcheck[1] == '.'
-				push!(labels, replace(labelcheck, "" => "") => linecount)
+				push!(labels, replace(labelcheck, "." => "") => linecount)
 			end
 		catch BoundsError
 		end
