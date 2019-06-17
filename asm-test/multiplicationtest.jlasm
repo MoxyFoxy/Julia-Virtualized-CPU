@@ -1,0 +1,13 @@
+.start
+	strwrite 10 * 10 Test. Run in Debug Mode.
+	print 32
+
+	load C 10
+	load D C
+	load A 0
+
+	jeq C 0 13
+	add A D
+	sub C 1
+	jmp 9
+	hlt
