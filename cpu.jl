@@ -9,7 +9,7 @@ function debug(s::AbstractString)
 	end
 end
 
-function cpu(filepath::String)
+function cpu(filepath::String, pushes = undef, startat = undef)
 
 	# Registers. https://www.swansontec.com/sregisters.html is a good reference. Based mostly on this
 
@@ -19,7 +19,7 @@ function cpu(filepath::String)
 	D::UInt16 = 0x00 # Data Register
 	RP::UInt16 = 0x01 # Read Pointer
 	WP::UInt16 = 0x01 # Write Pointer
-	SP::UInt16 = 0x01 # Stack Pointer
+	SP::UInt16 = 0x00 # Stack Pointer
 
 	# Interrupts
 
@@ -43,6 +43,13 @@ function cpu(filepath::String)
 
 	for (byte, x) in enumerate(stack)
 		stack[byte] = 0x00
+	end
+
+	if pushes !== undef
+		for value in pushes
+			SP += 1
+			stack[SP] = value
+		end
 	end
 
 	function wipeinput()
@@ -72,6 +79,15 @@ function cpu(filepath::String)
 				push!(labels, replace(labelcheck, "." => "") => linecount)
 			end
 		catch BoundsError
+		end
+	end
+
+	if startat !== undef
+		if tryparse(UInt64, startat) !== nothing
+			fileline = parseint(UInt64, startat)
+
+		else
+			fileline = labels[uppercase(startat)]
 		end
 	end
 
@@ -314,22 +330,24 @@ function cpu(filepath::String)
 				value = loadvalue(arguments[1])
 
 				if parse(Int, arguments[2]) == 16
-					debug("	Writing $value to stack at $SP")
-
 					lower = Int(value % 0x100)
 					upper = Int(value / 0x100)
 
 					SP += 1
 					stack[SP] = lower
+
+					debug("	Wrote $value to stack at position $SP")
 					
 					SP += 1
 					stack[SP] = upper
 
-				elseif parse(Int, arguments[2]) == 8
-					debug("	Writing $value to stack at $SP")
+					debug("	Wrote $value to stack at position $SP")
 
+				elseif parse(Int, arguments[2]) == 8
 					SP += 1
 					stack[SP] = value
+
+					debug("	Wrote $value to stack at position $SP")
 				end
 			end
 
@@ -346,14 +364,16 @@ function cpu(filepath::String)
 					SP -= 1
 
 					writetolocation(arguments[1], value)
-					debug("	Wrote $value to $(arguments[1])")
+					debug("	Wrote $value to $(arguments[1]) from position $(SP + 2)")
+					debug("	SP now at: $SP")
 
 				elseif parse(Int, arguments[2]) == 8
 					value = stack[SP]
 					SP -= 1
 
 					writetolocation(arguments[1], value)
-					debug("	Writing $value to stack at $SP")
+					debug("	Wrote $value to $(arguments[1]) from position $(SP + 1)")
+					debug("	SP now at: $SP")
 
 				else
 					throw("Incorrect bit size argument")
@@ -592,6 +612,61 @@ function cpu(filepath::String)
 		elseif instruction == "GOTO" # goto [label]
 			fileline = labels[replace(arguments[1], "." => "")]
 
+		elseif instruction == "CALL" # call [filename]
+			if size(arguments)[1] > 3
+				throw("Too many arguments")
+
+			else
+				if size(arguments)[1] >= 2
+					i = 1
+
+					if loadvalue(arguments[2]) != 0
+						vals_to_push::Array{UInt8} = Array{UInt8}(undef, loadvalue(arguments[2]))
+
+						while i <= loadvalue(arguments[2])
+							vals_to_push[i] = stack[SP]
+							SP -= 1
+							i += 1
+						end
+
+						debug("Loading File: $(split(arguments[1], "/")[end])")
+
+						if size(arguments)[1] == 3
+							try
+								stackvals = cpu(arguments[1], vals_to_push, loadvalue(arguments[3]))
+
+							catch Exception
+								stackvals = cpu(arguments[1], vals_to_push, arguments[3])
+							end
+
+						else
+							stackvals = cpu(arguments[1], vals_to_push)
+						end
+
+						for value in stackvals
+							SP += 1
+							stack[SP] = value
+						end
+
+					else
+						if size(arguments)[1] == 3
+							try
+								cpu(arguments[1], loadvalue(arguments[3]))
+
+							catch Exception
+								cpu(arguments[1], arguments[3])
+							end
+
+						else
+							cpu(arguments[1])
+						end
+					end
+
+				else
+					cpu(arguments[1])
+				end
+			end
+
 		elseif instruction == "HLT"
 			break
 		end
@@ -601,6 +676,19 @@ function cpu(filepath::String)
 		if fileline > size(file)[1]
 			break
 		end
+	end
+
+	if pushes !== undef
+		vals_to_return::Array{UInt8} = Array{UInt8}(undef, SP)
+		i = 0
+
+		while SP != 1
+			vals_to_return[i] = stack[SP]
+			SP -= 1
+			i += 1
+		end
+
+		return vals_to_return
 	end
 end
 
