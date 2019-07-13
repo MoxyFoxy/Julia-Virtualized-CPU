@@ -52,6 +52,8 @@ print (prints set amount of bytes from memory at RP to screen. Note that \n prop
 
 goto (goes to label) - GOTO [label]
 
+call (calls another file) - CALL [filename, amount to pop, label/line to jump to]
+
 hlt (stops the program) - HLT
 
 # Example
