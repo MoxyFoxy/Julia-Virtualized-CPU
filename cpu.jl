@@ -612,7 +612,7 @@ function cpu(filepath::String, pushes = undef, startat = undef)
 		elseif instruction == "GOTO" # goto [label]
 			fileline = labels[replace(arguments[1], "." => "")]
 
-		elseif instruction == "CALL" # call [filename]
+		elseif instruction == "CALL" # call [filename, amount to pop, label/line to jump to]
 			if size(arguments)[1] > 3
 				throw("Too many arguments")
 
