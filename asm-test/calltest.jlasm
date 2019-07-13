@@ -1,0 +1,3 @@
+push 1 8
+push 2 8
+call asm-test/returntest.jlasm 2 start

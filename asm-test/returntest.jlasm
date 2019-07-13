@@ -1,0 +1,9 @@
+.notstart
+	hlt
+
+.start
+	pop A 8
+	pop B 8
+	add A B
+	push A 8
+	hlt
