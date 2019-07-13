@@ -1,7 +1,9 @@
-.notstart
+; To be called from calltest.jlasm
+
+.notstart	; We don't want to start here
 	hlt
 
-.start
+.start		; We want to start here
 	pop A 8
 	pop B 8
 	add A B

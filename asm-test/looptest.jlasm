@@ -1,13 +1,13 @@
 .start
-    load C 26
-    load B 65
+	load C 26
+	load B 65
 
 .loop
-	jeq C 0 13
-    write B 8
-    iter WP
-    print 1
-    sub C 1
-    add B 1
-    goto .loop
-    hlt
+	jeq C 0 13	; If C == 0, jump past the goto loop
+	write B 8
+	iter WP
+	print 1
+	sub C 1
+	add B 1
+	goto .loop	; Showing the functionality of goto
+	hlt

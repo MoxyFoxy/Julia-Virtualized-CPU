@@ -1,4 +1,4 @@
-JEQ A 0 3
-WRITE A
-WRITE B
-PRINT 1
+jeq A 0 3	; Showing off the const line jumps
+write A
+write B
+write 1

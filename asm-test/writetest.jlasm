@@ -1,2 +1,4 @@
+; This is simply to testing string write and to show off its functionality
+
 strwrite abcdefghijklmnopqrstuvwxyz test
 print 31

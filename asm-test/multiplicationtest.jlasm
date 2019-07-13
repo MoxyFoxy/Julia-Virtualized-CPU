@@ -2,12 +2,12 @@
 	strwrite 10 * 10 Test. Run in Debug Mode.
 	print 32
 
-	load C 10
-	load D C
-	load A 0
+	load C 10	; Setting up counter register for 10 iterations
+	load D C	; Since it's a square, setting data register to counter register
+	load A 0	; Making sure accumulator is set to 0 (not necessary in this scenario)
 
-	jeq C 0 13
-	add A D
-	sub C 1
-	jmp 9
+	jeq C 0 13	; Halting if all iteration is done
+	add A D		; Adding to accumulator each iteration
+	sub C 1		; Subtracting from counter register each iteration
+	jmp 9		; Continuing loop (could also be done with a goto)
 	hlt

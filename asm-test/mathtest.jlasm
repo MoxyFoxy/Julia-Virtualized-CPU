@@ -1,7 +1,9 @@
-ADD A 48
-ADD B 100
-SUB B 48
-WRITE A 8
-ITER WP
-WRITE B 8
-PRINT 2
+; Showing off basic add/sub functionality as well as the iter instruction
+
+add A 48
+add B 100
+sub B 48
+write A 8
+iter WP
+write B 8
+print 2
