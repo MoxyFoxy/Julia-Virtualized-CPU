@@ -1,6 +1,6 @@
 .start
 	push 21 8						; Where to jump to after the string test.
-									; The reason I did this instead of a goto was because call wasn't a thing yet, and I wanted to show off the functionality of jumping through non-const values
+								; The reason I did this instead of a goto was because call wasn't a thing yet, and I wanted to show off the functionality of jumping through non-const values
 
 	strwrite This is equivalent.\n
 	write 0 16						; For some odd reason, double null buffer is needed or rogue 0x54 enters the fray
