@@ -35,7 +35,7 @@
 			jeq %B 0 46				; Check to see if first string has terminated
 			jeq %D 0 39				; Check to see if second string has terminated (if first string hasn't terminated)
 
-			jeq %B %D 42			; Check to see if the two characters are equal
+			jeq %B %D 42				; Check to see if the two characters are equal
 			pop B 8
 			jmp B
 
