@@ -617,6 +617,24 @@ function cpu(filepath::String, pushes = undef, startat = undef)
 				throw("Too many arguments")
 
 			else
+				call::String = split(replace(split(file[fileline], ";")[1], "," => " "))[2]
+
+				debug("	Loading $call as potential call.")
+
+				debug("	$call does $(ifelse(in('/', call), "", "not "))have a folder.")
+				if ! in('/', call)
+					call = string("std/", call)
+					debug("	Loading $call as std module.")
+				end
+
+				debug("	$call does $(ifelse(in('/', call), "", "not "))have an extension.")
+				if ! in('.', call)
+					call = string(call, ".jlasm")
+					debug("	Loading $call as jlasm file.")
+				end
+
+				call = replace(call, ":" => "/")
+
 				if size(arguments)[1] >= 2
 					i = 1
 
@@ -629,18 +647,18 @@ function cpu(filepath::String, pushes = undef, startat = undef)
 							i += 1
 						end
 
-						debug("Loading File: $(split(arguments[1], "/")[end])")
+						debug("	Loading File: $(split(call, "/")[end])\n")
 
 						if size(arguments)[1] == 3
 							try
-								stackvals = cpu(arguments[1], vals_to_push, loadvalue(arguments[3]))
+								stackvals = cpu(call, vals_to_push, loadvalue(arguments[3]))
 
 							catch Exception
-								stackvals = cpu(arguments[1], vals_to_push, arguments[3])
+								stackvals = cpu(call, vals_to_push, arguments[3])
 							end
 
 						else
-							stackvals = cpu(arguments[1], vals_to_push)
+							stackvals = cpu(call, vals_to_push)
 						end
 
 						for value in stackvals
@@ -651,19 +669,19 @@ function cpu(filepath::String, pushes = undef, startat = undef)
 					else
 						if size(arguments)[1] == 3
 							try
-								cpu(arguments[1], loadvalue(arguments[3]))
+								cpu(call, loadvalue(arguments[3]))
 
 							catch Exception
-								cpu(arguments[1], arguments[3])
+								cpu(call, arguments[3])
 							end
 
 						else
-							cpu(arguments[1])
+							cpu(call)
 						end
 					end
 
 				else
-					cpu(arguments[1])
+					cpu(call)
 				end
 			end
 
