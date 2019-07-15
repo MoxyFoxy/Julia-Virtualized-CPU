@@ -4,6 +4,10 @@
 # Memory pulled out so subroutines can share memory space
 memory = Array{UInt8}(undef, 5000)
 
+for (byte, x) in enumerate(memory)
+	memory[byte] = 0x00
+end
+
 function debug(s::AbstractString)
 	if size(ARGS)[1] > 1
 		if ARGS[2] == "true"
@@ -13,6 +17,8 @@ function debug(s::AbstractString)
 end
 
 function cpu(filepath::String, pushes = undef, startat = undef)
+
+	global memory
 
 	# Registers. https://www.swansontec.com/sregisters.html is a good reference. Based mostly on this
 
@@ -34,11 +40,7 @@ function cpu(filepath::String, pushes = undef, startat = undef)
 	OF2::Bool = false
 	OF3::Bool = false
 
-	# Memory and stack inits (memory pulled out for constant memory)
-
-	for (byte, x) in enumerate(memory)
-		memory[byte] = 0x00
-	end
+	# Stack inits (memory pulled out for constant memory)
 
 	stack::Array{UInt8} = Array{UInt8}(undef, 1000)
 
@@ -701,7 +703,7 @@ function cpu(filepath::String, pushes = undef, startat = undef)
 		vals_to_return::Array{UInt8} = Array{UInt8}(undef, SP)
 		i = 0
 
-		while SP != 1
+		while SP > 1
 			vals_to_return[i] = stack[SP]
 			SP -= 1
 			i += 1
