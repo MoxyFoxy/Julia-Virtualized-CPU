@@ -1,0 +1,77 @@
+; str (string) standard library module by Foxify
+
+; Takes two pointers, one for each string, returns either 0 or 1 (push order does not matter, but for best practice push the one being compared first)
+.compare
+	pop B 8
+	pop D 8
+
+	.compare-loop				; Main loop
+		jeq %B 0 20				; Check to see if first string has terminated (+11)
+		jneq %D 0 13			; Check to see if second string has terminated (if first string hasn't terminated) (+3)
+		goto .compare-return
+
+		jeq %B %D 16			; Check to see if the two characters are equal (+3)
+		goto .compare-return
+
+		add B 1					; Iterate pointers
+		add D 1
+		goto .compare-loop
+
+		jeq %D 0 23				; Check to see if second string has terminated (if the first string HAS terminated) (+3)
+		goto .compare-return
+
+		toggle OF				; If both are terminated without previously jumping out, set OF to true
+
+	.compare-return
+		jif OF 30				; Check to see if first OF is set to true (+4)
+		push 0 8				; Return 0 (false)
+		hlt
+
+		push 1 8				; Return 1 (true)
+		hlt
+
+; Takes two pointers, one to a string, and one to put the new string (push original string first)
+.uppercase-eng
+	pop B 8
+	pop D 8
+
+	.uppercase-eng-loop	; Main loop
+		add A %B		; Add the character to A
+
+		jgt A 122 45	; Check if A is past z (+4)
+		jlt A 97 45		; Check if A is before a (+3)
+
+		sub A 32		; Subtract 32 to set to uppercase
+		load %D A		; Set location at D to A
+
+		jneq A 0 50		; Check if A is not null (+3)
+		hlt
+
+		load A 0		; Reset accumulator
+		add B 1			; Iterate pointers
+		add D 1
+
+		goto .uppercase-eng-loop
+
+; Takes two pointers, one to a string, and one to put the new string (push original string first)
+.lowercase-eng
+	pop B 8
+	pop D 8
+
+	.lowercase-eng-loop	; Main loop
+		add A %B		; Add the character to A
+
+		jgt A 90 68		; Check if A is past Z (+4)
+		jlt A 65 68		; Check if A is before A (+3)
+
+		add A 32		; Add 32 to set to lowercase
+		load %D A		; Set location at D to A
+
+		jneq A 0 73		; Check if A is not null (+3)
+		hlt
+
+		load A 0		; Reset accumulator
+		add B 1			; Iterate pointers
+		add D 1
+
+		goto .lowercase-eng-loop
