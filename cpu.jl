@@ -2,7 +2,7 @@
 # Called using: julia cpu.jl path/to/file.jlasm [optional debugging method, type "true" if you want debugging text turned on]
 
 # Memory pulled out so subroutines can share memory space
-memory::Array{UInt8} = Array{UInt8}(undef, 5000)
+memory = Array{UInt8}(undef, 5000)
 
 function debug(s::AbstractString)
 	if size(ARGS)[1] > 1
