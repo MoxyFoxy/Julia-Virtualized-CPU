@@ -1,0 +1,57 @@
+; These are the strings to test with
+strwrite THIS IS UPPERCASE\n
+print 18
+iter WP
+iter RP
+
+strwrite THIS IS UPPERCASE\n
+push 1 8
+push 20 8
+print 18
+iter WP
+iter RP
+
+; Testing compare
+call str 2 compare
+pop A 8
+
+; Check if result was true or false
+jeq A 0 24
+strwrite true\n\n
+print 6
+jmp 28
+
+strwrite false\n\n
+print 7
+
+; Push pointers again for lowercase-eng
+push 1 8
+push 20 8
+load RP 1
+print 18
+iter RP
+
+call str 2 lowercase-eng
+print 18
+
+; Simply to get another newline for a e s t h e t i c
+sub RP 1
+print 1
+
+; Reset WP and RP to initial value
+load WP 1
+load RP 1
+
+; New string for showing uppercase-eng
+strwrite this is lowercase\n
+print 18
+iter WP
+iter RP
+
+; Push pointers for uppercase-eng
+push 1 8
+push 20 8
+call str 2 uppercase-eng
+
+; Print results
+print 18
