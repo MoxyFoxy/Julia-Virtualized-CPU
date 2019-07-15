@@ -1,6 +1,9 @@
 # Julia virtual CPU created by Masterfoxify
 # Called using: julia cpu.jl path/to/file.jlasm [optional debugging method, type "true" if you want debugging text turned on]
 
+# Memory pulled out so subroutines can share memory space
+memory::Array{UInt8} = Array{UInt8}(undef, 5000)
+
 function debug(s::AbstractString)
 	if size(ARGS)[1] > 1
 		if ARGS[2] == "true"
@@ -31,9 +34,7 @@ function cpu(filepath::String, pushes = undef, startat = undef)
 	OF2::Bool = false
 	OF3::Bool = false
 
-	# Memory
-
-	memory::Array{UInt8} = Array{UInt8}(undef, 5000)
+	# Memory and stack inits (memory pulled out for constant memory)
 
 	for (byte, x) in enumerate(memory)
 		memory[byte] = 0x00
